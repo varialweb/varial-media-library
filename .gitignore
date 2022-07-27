@@ -1,0 +1,12 @@
+node_modules/
+public/media/**
+!/public/media/*.gitkeep
+!/public/media/_root/*.gitkeep
+yarn-error.log*
+*.env
+.env
+.env*
+.DS_STORE
+**/*.DS_STORE
+Dockerfile
+.dockerignore
