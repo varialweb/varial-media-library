@@ -27,6 +27,7 @@ app.get('/images', async (req, res) => {
 async function handleImageQuery(req, res) {
   const { query, params } = req
   const folder = `${__dirname}/public/media/${params.folder ? `${params.folder}` : '_root' }/${params.image}`
+  res.set('Cache-control', 'public, max-age=604800') // 1 week
   if (Object.keys(query).length === 0) return res.sendFile(`${folder}/base.webp`)
 
   const { w, h, q, fit, gray, flip, mirror, rotate } = req.query
