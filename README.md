@@ -66,7 +66,7 @@ The server can handle image optimizations and serve them to you via URLS. The fo
 // This code should be run server-side, so that your end users cannot access the API key
 const myApiKey = process.env.MEDIA_API_KEY 
 
-fetch('https://localhost:3001/objects', {
+fetch('https://localhost:3001/images', {
   method: 'POST',
   body: JSON.stringify({
     apiKey: myApiKey
@@ -78,46 +78,46 @@ fetch('https://localhost:3001/objects', {
     // do something with objects
   }
 })
-.catch(error => console.error('Error fetching objects', error))
+.catch(error => console.error('Error fetching images', error))
 ```
 ### Get a single object
 Images can be accessed by URL:
-```<img src="https://localhost/objects/my-object-id">```
+```<img src="https://localhost/image/my-image-id">```
 
 #### Optimizing images
 Images can be resized by adding various queries to the URL
 
 ##### Change the width
-```<img src="https://localhost/objects/my-object-id?w=768">```
+```<img src="https://localhost/images/my-image-id?w=768">```
 
 ##### Change the height
-```<img src="https://localhost/objects/my-object-id?h=400">```
+```<img src="https://localhost/images/my-image-id?h=400">```
 
 ##### Change the quality
-```<img src="https://localhost/objects/my-object-id?q=60">```
+```<img src="https://localhost/images/my-image-id?q=60">```
 
 ##### Adjusting the fit
 By default, the server will handle adjustments to the width *and* height by setting the fit to 'cover', meaning that it will zoom into the center of the image. 
 
 You can change this behavior by adding the query argument `fit`. Accepts the following values: `cover, contain, fill, outside, inside`
 
-```<img src="https://localhost/objects/my-object-id?w=400&h=300&q=60&fit=fill">``` 
+```<img src="https://localhost/images/my-image-id?w=400&h=300&q=60&fit=fill">``` 
 
 ##### Examples
 
-```https://localhost/object/beach-sunglasses```
+```https://localhost/images/beach-sunglasses```
 
 ![](https://media.varial.dev/objects/beach-sunglasses)
 
-```https://localhost/objects/beach-sunglasses?w=800&h=300```
+```https://localhost/images/beach-sunglasses?w=800&h=300```
 
 ![](https://media.varial.dev/objects/beach-sunglasses?w=800&h=300)
 
-```https://localhost/objects/beach-sunglasses?w=600&h=250```
+```https://localhost/images/beach-sunglasses?w=600&h=250```
 
 ![](https://media.varial.dev/objects/beach-sunglasses?w=600&h=250)
 
-```https://localhost/objects/beach-sunglasses?w=400&h=250```
+```https://localhost/images/beach-sunglasses?w=400&h=250```
 
 ![](https://media.varial.dev/objects/beach-sunglasses?w=400&h=250)
 
