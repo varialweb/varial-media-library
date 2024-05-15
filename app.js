@@ -10,7 +10,7 @@ const { downloadImages } = require('./util/bucket/Download')
 const app = express()
 const port = process.env.PORT ?? 3001
 
-app.use(bodyParser.text({ limit: '3mb', extended: true }))
+app.use(bodyParser.text({ limit: '5mb', extended: true }))
 
 app.use(cors())
 
@@ -26,8 +26,8 @@ app.get('/images', async (req, res) => {
 
 async function handleImageQuery(req, res) {
   const { query, params } = req
-  const folder = `${__dirname}/public/media/${params.folder ? `${params.folder}` : '_root' }/${params.image}`
-  res.set('Cache-control', 'public, max-age=604800') // 1 week
+  const folder = `${__dirname}/public/media/${params.folder ? `${params.folder}` : '_root' }/${params.image}/${params.version}`
+  res.set(`Cache-control', 'public, max-age=${process.env.CACHE_LENGTH}`) // 1 week = 604800 seconds
   if (Object.keys(query).length === 0) return res.sendFile(`${folder}/base.webp`)
 
   const { w, h, q, fit, gray, flip, mirror, rotate } = req.query
@@ -73,23 +73,13 @@ async function handleImageQuery(req, res) {
     await createVariant()
     
   }
-  
-  // return res.sendFile(`${folder}/base.webp`)
 }
 
-app.get('/images/:image', async (req, res) => {
-
-  // console.log(req.query)
-
-  // return res.sendFile(`${__dirname}/public/media/_root/${req.params.image}/base.webp`)
+app.get('/images/:image/:version', async (req, res) => {
   await handleImageQuery(req, res)
 })
 
-app.get('/images/:folder/:image', async (req, res) => {
-
-  // console.log(req.query)
-
-  // return res.sendFile(`${__dirname}/public/media/${req.params.folder}/${req.params.image}/base.webp`)
+app.get('/images/:folder/:image/:version', async (req, res) => {
   await handleImageQuery(req, res)
 })
 
@@ -107,6 +97,8 @@ app.delete('/delete', (req, res) => {
   const { apiKey, name, folder } = JSON.parse(req.body)
 
   if (apiKey !== process.env.API_KEY) return res.status(401).send({ error_message: 'Unauthorized request' })
+
+  console.log('delete', name, folder)
 
   deleteImage({ name, folder: folder ? folder : undefined, res })
 })

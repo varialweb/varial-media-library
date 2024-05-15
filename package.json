@@ -1,6 +1,6 @@
 {
   "name": "media-library",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Manages, optimizes, and manipulates media library.",
   "main": "app.js",
   "author": "Danny Barrett <Varial Web Services>",

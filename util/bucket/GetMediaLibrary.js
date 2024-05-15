@@ -10,10 +10,13 @@ function getMediaLibrary() {
     let files = fs.readdirSync(dir).filter(i => i !== '.DS_Store' && i !== '.gitkeep')
 
     files.forEach(file => {
-      if (fs.statSync(`${dir}/${file}`).isDirectory()) return getAllFiles(`${dir}/${file}`)
+      // console.log('getallfiles', file)
+      if (fs.statSync(`${dir}/${file}`).isDirectory()) return getAllFiles(process.platform === 'win32' ? `${dir}\\${file}` : `${dir}/${file}`)
 
       if (file.endsWith('base.webp')) {
-        allFiles.push(`${dir}/${file}`.split('//')[1])
+        let fileName = process.platform === 'win32' ? `${dir}\\${file}`.split('\\\\')[1] : `${dir}/${file}`.split('//')[1]
+        console.log('filename', `${dir}\\${file}`.split('\\\\')[1])
+        allFiles.push(fileName.replace('\\', '/'))
       }
     })
   }
@@ -21,16 +24,19 @@ function getMediaLibrary() {
   getAllFiles(localFolder)
 
   const library = [...allFiles].map(file => {
-    const paths = file.split('/')
+    
+    console.log('file', file)
+    if (!file) return
+    // const paths = process.platform === 'win32' ? file.split('\\') : file.split('/')
 
-    // console.log('file', file)
+    
     
     const meta = jsonfile.readFileSync(`${localFolder}${file.replace('base.webp', 'meta.json')}`)
 
     // console.log('meta', meta)
     return {
       ...meta,
-      url: `${process.env.BASE_URL}/images/${file.replace('base.webp', '').replace('_root/', '').slice(0, -1)}`,
+      url: `${process.env.BASE_URL}/images/${file.replace('base.webp', '').replace('_root/', '').slice(0, -1)}`.replace('\\', '/'),
     }
   })
 

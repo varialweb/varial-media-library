@@ -4,7 +4,7 @@ const { PutObjectCommand } = require('@aws-sdk/client-s3')
 const { localFolder } = require('./LocalFolder')
 const { client } = require('./Client')
 
-async function upload({ name = '', description = '', file = '', subFolder, sizes = [], res }) {
+async function upload({ name = '', description = '', file = '', subFolder, sizes = [], version = 1, res }) {
   let successful = true
 
   console.log('upload request received')
@@ -17,11 +17,15 @@ async function upload({ name = '', description = '', file = '', subFolder, sizes
       if (!file) return res.status(500).send({ error_message: 'Error uploading file', error: 'File is null' })
 
       const base64Data = Buffer.from(file.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-      let path = `${localFolder}${subFolder ? (subFolder + '/') : '_root/'}${name.toLowerCase()}`
+      let path = `${localFolder}${subFolder ? (subFolder + '/') : '_root/'}${name.toLowerCase()}/v${version}`
       
-      if (!fs.existsSync(localFolder + `${subFolder ? (subFolder + '/') : '_root/'}` + name.toLowerCase())) {
-        fs.mkdirSync(localFolder + `${subFolder ? (subFolder + '/') : '_root/'}` + name.toLowerCase(),{ recursive : true })
-      } 
+      // if (!fs.existsSync(localFolder + `${subFolder ? (subFolder + '/') : '_root/'}` + name.toLowerCase())) {
+      //   fs.mkdirSync(localFolder + `${subFolder ? (subFolder + '/') : '_root/'}` + name.toLowerCase(),{ recursive : true })
+      // }
+
+      if (!fs.existsSync(path)) {
+        fs.mkdirSync(path, { recursive: true })
+      }
 
       sharp(base64Data)
       .webp({ quality: 60 })
@@ -39,13 +43,14 @@ async function upload({ name = '', description = '', file = '', subFolder, sizes
           description: description,
           width: info.width,
           height: info.height,
+          version: version,
         }
 
           
           
         const response = await client.send(new PutObjectCommand({
           Bucket: process.env.BUCKET_NAME,
-          Key: `${subFolder ? (subFolder + '/') : '_root/'}${name.toLowerCase()}/base.webp`,
+          Key: `${subFolder ? (subFolder + '/') : '_root/'}${name.toLowerCase()}/v${version}/base.webp`,
           // Key: `_root/${name.toLowerCase()}/base.webp`,
           Body: result,
           ContentEncoding: 'buffer',

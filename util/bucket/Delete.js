@@ -5,7 +5,7 @@ const { localFolder } = require('./LocalFolder')
 
 async function deleteImage({ name, folder, res }) {
 
-  const path = localFolder + (folder ?? '_root') + '/' + name
+  const path = localFolder + (folder ?? '_root') + (process.platform === 'win32' ? '\\' : '/') + name
 
   if (fs.existsSync(path)) {
     fs.removeSync(path)
